@@ -1,0 +1,105 @@
+import groovyx.gpars.GParsPool
+import net.masterthought.cucumber.ReportBuilder
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.codehaus.gpars:gpars:1.2.1"
+        classpath "net.masterthought:cucumber-reporting:3.4.0"
+    }
+}
+
+
+task cucumber() {
+    dependsOn assemble, compileTestGroovy
+    doLast {
+        List<String> deviceNames = parseDevices()
+        List<String> cucumberTags = parseTags()
+        if (deviceNames.size() < 2) {
+            single(deviceNames[0], cucumberTags)
+        } else {
+            parallel(deviceNames, cucumberTags)
+        }
+        generateReport()
+    }
+}
+
+void single(String deviceName, List<String> cucumberTags) {
+    lunchCucumberCli(deviceName, cucumberTags)
+}
+
+void parallel(List<String> devices, List<String> cucumberTags) {
+    GParsPool.withPool(3) {
+        devices.eachParallel { String deviceName ->
+            println "Created fork for: ${deviceName}"
+            lunchCucumberCli(deviceName, cucumberTags)
+        }
+    }
+}
+
+void lunchCucumberCli(String deviceName, List<String> cucumberTags) {
+    println 'starting'
+    println "Running for: ${deviceName}"
+    List<String> cucumberArgs = []
+    cucumberArgs = ['--plugin', 'pretty', '--plugin', "json:${reporting.baseDir}/cucumber/${deviceName}.json",
+                    '--plugin', "html:build/reports/cucumber-html-report-1", '--glue',
+                    'src/cucumber/', 'src/test/groovy/', 'src/test/resources/', 'src/cucumber/features']
+    cucumberArgs.addAll(cucumberTags)
+    try {
+        javaexec {
+            jvmArgs = ["-Dgeb.env=${deviceName}",
+                       "-Dosx=${System.getProperty("osx", "")}"]
+            main = "cucumber.api.cli.Main"
+            classpath = sourceSets.test.runtimeClasspath + sourceSets.main.runtimeClasspath
+            //+ configurations.cucumberRuntime
+            args = cucumberArgs
+        }
+    }
+    catch (Exception e) {
+    }
+}
+
+List<String> parseTags() {
+    List<String> result = []
+    if (project.hasProperty('tags')) {
+        project.tags.replace(' ', '').split('&').each {
+            result << '--tags '
+            result << it.replace('|', ',')
+        }
+
+    } else {
+        println "Project don't have tags!"
+    }
+    result << '--tags '
+    result << '~@ignore'
+    return result
+}
+
+List<String> parseDevices() {
+    List<String> result = []
+    if (project.hasProperty('device')) {
+        result = project.device.replace(' ', '').split(',')
+    } else {
+        println 'No devices detected.'
+    }
+    result
+}
+
+def generateReport() {
+    println "Tests completed. Generating report...."
+    File reportOutputDirectory = new File("${reporting.baseDir}/")
+    def jsonReports = fileTree(dir: "${reporting.baseDir}/cucumber/").include '**.json'.toString()
+    List<String> jsonReportFiles = new ArrayList<String>()
+    jsonReports.each { File file ->
+        jsonReportFiles.add("${reporting.baseDir}/cucumber/${file.name}".toString());
+    }
+    String title = "Basic Mobile Automation Report"
+    net.masterthought.cucumber.Configuration configuration = new net.masterthought.cucumber.Configuration(reportOutputDirectory, title)
+    configuration.setParallelTesting(true)
+    configuration.setRunWithJenkins(false)
+    configuration.setBuildNumber("1")
+    ReportBuilder reportBuilder = new ReportBuilder(jsonReportFiles, configuration)
+    reportBuilder.generateReports()
+}
