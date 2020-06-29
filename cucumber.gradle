@@ -7,7 +7,7 @@ buildscript {
     }
     dependencies {
         classpath "org.codehaus.gpars:gpars:1.2.1"
-        classpath "net.masterthought:cucumber-reporting:3.4.0"
+        classpath "net.masterthought:cucumber-reporting:3.12.0"
     }
 }
 
@@ -40,7 +40,6 @@ void parallel(List<String> devices, List<String> cucumberTags) {
 }
 
 void lunchCucumberCli(String deviceName, List<String> cucumberTags) {
-    println 'starting'
     println "Running for: ${deviceName}"
     List<String> cucumberArgs = []
     cucumberArgs = ['--plugin', 'pretty', '--plugin', "json:${reporting.baseDir}/cucumber/${deviceName}.json",
@@ -70,7 +69,7 @@ List<String> parseTags() {
         }
 
     } else {
-        println "Project don't have tags!"
+        println "No tags selected. Running for all."
     }
     result << '--tags '
     result << '~@ignore'

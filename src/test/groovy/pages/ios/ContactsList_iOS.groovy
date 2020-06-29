@@ -7,18 +7,18 @@ import org.openqa.selenium.By
 class ContactsList_iOS extends Page {
 
     static at = {
-        waitFor { barTitle.text() == 'Contacts' }
+        sleep(3000)
+        waitFor { barTitle.value() == 'Contacts' }
     }
 
 	static content = {
-        barTitle                                                { $(MobileBy.xpath("//XCUIElementTypeApplication[@name=\"Contacts\"]")) }
-        contactNames                                            { $(MobileBy.xpath('//XCUIElementTypeApplication[@name="Contacts"]/XCUIElementTypeWindow[1]/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeTable')).find(By.className('XCUIElementTypeCell')).find(By.className('XCUIElementTypeStaticText'))}
+        barTitle                                                { $(MobileBy.className('XCUIElementTypeStaticText'))[0] }
+        contactNames                                            { $(MobileBy.className('XCUIElementTypeCell')).find(MobileBy.xpath("//XCUIElementTypeStaticText")) }
         contactName             (to: ContactDetail_iOS)         { int pos -> contactNames[pos] }
     }
 
     void clickOnFirstContact() {
         contactName(0).click()
-        sleep(3000)
     }
 
 }

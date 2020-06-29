@@ -64,22 +64,20 @@ appium -a 127.0.0.1 -p 4444
 
 Then ou can run the tests, open a different console (leave the previous one running) and run:
 ```
-./gradlew cucumber -Pdevice=Android7 -Posx=android
+./gradlew cucumber -Pdevice=Android7
 ```
 
 Same sample for iOS:
 ```
-./gradlew cucumber -Pdevice=iPhone7 -Posx=ios
+./gradlew cucumber -Pdevice=iPhone7
 ```
 
 #### Special Parameters
 
-* -Posx: defines the system where you will run.
-    * Availables: android | ios
 * -Pdevice: defines the model of the device you will run (real, simulator, emulator)
     * Availables:
-        * iPhone7: Simulator for iPhone7 with ios 10.3
-        * Android7: Android Emulator with Android 7.1
+        * iPhone7: Simulator for iPhone7 with ios 12.0
+        * Android7: Android Emulator with Android 7.0
         * Android5: Android Emulator with Android 5.1.1
     * You can add your models in GebConfig.groovy file.
 * -Ptags: defines the scenario/s you want to run
