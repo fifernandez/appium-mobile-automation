@@ -18,7 +18,6 @@ class ContactsList_Android extends Page {
 
     void clickOnFirstContact() {
         contactName(0).click()
-        sleep(3000)
     }
 
 }

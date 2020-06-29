@@ -4,18 +4,11 @@ apply plugin: 'java'
 apply from: "cucumber.gradle"
 
 ext {
-    groovyVersion = '2.4.7'
-    gebVersion = '1.1'
-    seleniumVersion = '2.53.1'
-    cucumberJvmVersion = '1.2.5'
-    appiumClientVersion = '4.1.2'
-
-    //Last
-    //groovyVersion = '2.5.0-beta-1'
-    //gebVersion = '1.1'
-    //seleniumVersion = '2.53.1'
-    //cucumberJvmVersion = '1.2.5'
-    //appiumClientVersion = '5.0.3'
+    cucumberJvmVersion = '1.2.6'
+    groovyVersion = '3.0.3'
+    seleniumVersion = '3.141.59'
+    appiumClientVersion = '7.3.0'
+    gebVersion = '3.4'
 }
 
 repositories {
@@ -23,19 +16,17 @@ repositories {
 }
 
 configurations {
-	cucumberRuntime {
-		extendsFrom testRuntime
-	}
+    cucumberRuntime {
+        extendsFrom testRuntime
+    }
 }
 
 dependencies {
     compile "org.codehaus.groovy:groovy-all:$groovyVersion"
     testCompile "io.appium:java-client:$appiumClientVersion"
     testCompile "org.gebish:geb-core:$gebVersion"
-    testCompile "org.seleniumhq.selenium:selenium-server:${seleniumVersion}"
-    testCompile 'junit:junit:4.12'
-    testCompile "info.cukes:cucumber-core:$cucumberJvmVersion"
-    testCompile "info.cukes:cucumber-junit:$cucumberJvmVersion"
+    testCompile "org.seleniumhq.selenium:selenium-java:${seleniumVersion}"
+    //testCompile "info.cukes:cucumber-core:$cucumberJvmVersion"
     testCompile "info.cukes:cucumber-groovy:$cucumberJvmVersion"
     testCompile "info.cukes:cucumber-java:$cucumberJvmVersion"
 }

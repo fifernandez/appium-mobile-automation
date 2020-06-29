@@ -7,15 +7,18 @@ import org.openqa.selenium.By
 class ContactDetail_iOS extends Page {
 
     static at = {
-        println 'viene a detalles'
-        sleep(10000)
-        waitFor { barTitle.value() == 'Contacts' }
+        sleep(3000)
+        waitFor { barTitle.value() == 'Contact Details' }
     }
 
 	static content = {
-        barTitle                    { $(MobileBy.xpath('//XCUIElementTypeNavigationBar[@name="Contact Details"]')) }
-        parameters                  { $(MobileBy.xpath('//XCUIElementTypeApplication[@name="Contacts"]/XCUIElementTypeWindow[1]/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther')).find(By.className('XCUIElementTypeStaticText'))}
-        name                        { parameters[0]  }
+        barTitle                    { $(MobileBy.className('XCUIElementTypeStaticText'))[0] }
+        parameters                  { $(MobileBy.className('XCUIElementTypeStaticText'))}
+        name                        { parameters[1] }
+        phone                       { parameters[3] }
+        email                       { parameters[5] }
+        address1                    { parameters[7] }
+        address2                    { parameters[1] }
     }
 
 }
